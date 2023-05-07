@@ -2,12 +2,7 @@
     - hosts: all
       become: yes
 
-    # Your AWS Access key ID and Secret Access Key
-  vars:
-  access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-  secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-
-  tasks:
+      tasks:
 
     # Create a new instance
     - name: Launch a new instance
