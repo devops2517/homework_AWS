@@ -12,7 +12,7 @@
             region: ap-southeast-2
             group_id: sg-0f0f3ea42350f1639
             count: 1
-            vpc_subnet_id: subnet-0a8ac714f0951880e
+            vpc_subnet_id: subnet-0bb711975146a3685
             wait: yes
             wait_timeout: 500
             instance_tags:
