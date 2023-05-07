@@ -1,6 +1,6 @@
   --
-    - hosts: localhost
-  connection: local
+    - hosts: all
+      become: yes
 
     # Your AWS Access key ID and Secret Access Key
   vars:
