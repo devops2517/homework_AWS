@@ -9,7 +9,7 @@
             key_name: first
             instance_type: t2.micro
             image: ami-0aa2b7722dc1b5612
-            region: us-east-1a
+            region: ap-southeast-2
             group_id: sg-0f0f3ea42350f1639
             count: 1
             vpc_subnet_id: subnet-0a8ac714f0951880e
