@@ -1,80 +1,79 @@
-  --
-    - hosts: all
-      become: yes
-
-      tasks:
-
-    # Create a new instance
-    - name: Launch a new instance
-  ec2:
-  key_name: first
-  instance_type: t2.micro
-  image: ami-0aa2b7722dc1b5612
-  region: us-east-1a
-  group_id: sg-0f0f3ea42350f1639
-  count: 1
-  vpc_subnet_id: subnet-0a8ac714f0951880e
-  wait: yes
-  wait_timeout: 500
-  instance_tags:
-  Name: webserver1
-
-  register: ec2
-    
-    # Save instance details
-    - name: Save instance details
-  set_fact:
-  instance_id: "{{ ec2.instances[0].id }}"
-  region: "{{ ec2.region }}"
-
-    # Wait for instance to boot up
-    - name: Wait for Instance to boot
-  wait_for:
-  host: "{{ ec2.instances[0].public_ip }}"
-  port: 22
-  delay: 10
-  timeout: 320
+---
+- hosts: all
   become: yes
-  become_user: ubuntu
-    
-    # Install nginx on ubuntu instance
-    - name: Install Nginx
-  become: yes
-  become_user: ubuntu
-  hosts: all
   tasks:
-    - name: Update current packages
-  apt:
-  update_cache: yes
-  become: yes
 
-    - name: Install Nginx
-  apt:
-  name: nginx
-  state: latest
-    
-    # Replace index.html file with custom index.html file
-    - name: Modify nginx index.html file
-  become: yes
-  become_user: ubuntu
-  hosts: all
-  replace:
-  path: /usr/share/nginx/html/index.html
-  regexp: "<h1>Welcome to nginx!</h1>"
-  replace: "<h1>Congratulations! AWS Virtual Machine is up and running</h1>"
+      # Create a new instance
+      - name: Launch a new instance
+        ec2:
+            key_name: first
+            instance_type: t2.micro
+            image: ami-0aa2b7722dc1b5612
+            region: us-east-1a
+            group_id: sg-0f0f3ea42350f1639
+            count: 1
+            vpc_subnet_id: subnet-0a8ac714f0951880e
+            wait: yes
+            wait_timeout: 500
+            instance_tags:
+                Name: webserver1
+        register: ec2
 
-    # restart nginx
-    - name: Restart Nginx
-  become: yes
-  become_user: ubuntu
-  hosts: all
-  service:
-  name: nginx
-  state: restarted
-    
-    # Print instance Details
-    - name: Print Instance Details
-  debug:
-  var: instance_id
-    - debug:
-  var: ec2.instances[0].public_dns_name
+      # Save instance details
+      - name: Save instance details
+        set_fact:
+            instance_id: "{{ ec2.instances[0].id }}"
+            region: "{{ ec2.region }}"
+
+      # Wait for instance to boot up
+      - name: Wait for Instance to boot
+        wait_for:
+            host: "{{ ec2.instances[0].public_ip }}"
+            port: 22
+            delay: 10
+            timeout: 320
+            become: yes
+            become_user: ubuntu
+
+      # Install nginx on ubuntu instance
+      - name: Install Nginx
+        become: yes
+        become_user: ubuntu
+        hosts: all
+        tasks:
+            - name: Update current packages
+              apt:
+                  update_cache: yes
+                  become: yes
+
+            - name: Install Nginx
+              apt:
+                  name: nginx
+                  state: latest
+
+      # Replace index.html file with custom index.html file
+      - name: Modify nginx index.html file
+        become: yes
+        become_user: ubuntu
+        hosts: all
+        replace:
+            path: /usr/share/nginx/html/index.html
+            regexp: "<h1>Welcome to nginx!</h1>"
+            replace: "<h1>Congratulations! AWS Virtual Machine is up and running</h1>"
+
+      # restart nginx
+      - name: Restart Nginx
+        become: yes
+        become_user: ubuntu
+        hosts: all
+        service:
+            name: nginx
+            state: restarted
+
+      # Print instance Details
+      - name: Print Instance Details
+        debug:
+            var: instance_id
+
+      - debug:
+            var: ec2.instances[0].public_dns_name
