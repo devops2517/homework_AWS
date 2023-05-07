@@ -39,33 +39,31 @@
       - name: Install Nginx
         become: yes
         become_user: ubuntu
-        hosts: all
-        tasks:
-            - name: Update current packages
-              apt:
-                  update_cache: yes
-                  become: yes
+        delegate_to: "{{ ec2.instances[0].public_ip }}"
+        apt:
+            update_cache: yes
 
-            - name: Install Nginx
-              apt:
-                  name: nginx
-                  state: latest
+      - name: Install Nginx
+        become: yes
+        become_user: ubuntu
+        delegate_to: "{{ ec2.instances[0].public_ip }}"
+        apt:
+            name: nginx
+            state: latest
 
-      # Replace index.html file with custom index.html file
       - name: Modify nginx index.html file
         become: yes
         become_user: ubuntu
-        hosts: all
+        delegate_to: "{{ ec2.instances[0].public_ip }}"
         replace:
             path: /usr/share/nginx/html/index.html
             regexp: "<h1>Welcome to nginx!</h1>"
             replace: "<h1>Congratulations! AWS Virtual Machine is up and running</h1>"
 
-      # restart nginx
       - name: Restart Nginx
         become: yes
         become_user: ubuntu
-        hosts: all
+        delegate_to: "{{ ec2.instances[0].public_ip }}"
         service:
             name: nginx
             state: restarted
