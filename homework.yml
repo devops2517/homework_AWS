@@ -12,17 +12,17 @@
     # Create a new instance
     - name: Launch a new instance
   ec2:
-  key_name: a_name                      # ssh key-name
-  instance_type: t2.micro               # The instance type for the EC2 instance
-  image: ami-0c55b159cbfafe1f0          # The ID of the AMI to launch
-  region: ap-northeast-1                # The region to use
-  group_id: sg-0c9e6a41ba47f33dc        # The security group id
-  count: 1                              # The number of instances to launch
-  vpc_subnet_id: subnet-98dc71e0        # The subnet id to launch in
+  key_name: first
+  instance_type: t2.micro
+  image: ami-0aa2b7722dc1b5612
+  region: us-east-1a
+  group_id: sg-0f0f3ea42350f1639
+  count: 1
+  vpc_subnet_id: subnet-0a8ac714f0951880e
   wait: yes
   wait_timeout: 500
   instance_tags:
-  Name: webserver1                    # Set a Name tag on the instance
+  Name: webserver1
 
   register: ec2
     
