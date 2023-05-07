@@ -1,0 +1,85 @@
+  --
+    - hosts: localhost
+  connection: local
+
+    # Your AWS Access key ID and Secret Access Key
+  vars:
+  access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+  secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+
+  tasks:
+
+    # Create a new instance
+    - name: Launch a new instance
+  ec2:
+  key_name: a_name                      # ssh key-name
+  instance_type: t2.micro               # The instance type for the EC2 instance
+  image: ami-0c55b159cbfafe1f0          # The ID of the AMI to launch
+  region: ap-northeast-1                # The region to use
+  group_id: sg-0c9e6a41ba47f33dc        # The security group id
+  count: 1                              # The number of instances to launch
+  vpc_subnet_id: subnet-98dc71e0        # The subnet id to launch in
+  wait: yes
+  wait_timeout: 500
+  instance_tags:
+  Name: webserver1                    # Set a Name tag on the instance
+
+  register: ec2
+    
+    # Save instance details
+    - name: Save instance details
+  set_fact:
+  instance_id: "{{ ec2.instances[0].id }}"
+  region: "{{ ec2.region }}"
+
+    # Wait for instance to boot up
+    - name: Wait for Instance to boot
+  wait_for:
+  host: "{{ ec2.instances[0].public_ip }}"
+  port: 22
+  delay: 10
+  timeout: 320
+  become: yes
+  become_user: ubuntu
+    
+    # Install nginx on ubuntu instance
+    - name: Install Nginx
+  become: yes
+  become_user: ubuntu
+  hosts: all
+  tasks:
+    - name: Update current packages
+  apt:
+  update_cache: yes
+  become: yes
+
+    - name: Install Nginx
+  apt:
+  name: nginx
+  state: latest
+    
+    # Replace index.html file with custom index.html file
+    - name: Modify nginx index.html file
+  become: yes
+  become_user: ubuntu
+  hosts: all
+  replace:
+  path: /usr/share/nginx/html/index.html
+  regexp: "<h1>Welcome to nginx!</h1>"
+  replace: "<h1>Congratulations! AWS Virtual Machine is up and running</h1>"
+
+    # restart nginx
+    - name: Restart Nginx
+  become: yes
+  become_user: ubuntu
+  hosts: all
+  service:
+  name: nginx
+  state: restarted
+    
+    # Print instance Details
+    - name: Print Instance Details
+  debug:
+  var: instance_id
+    - debug:
+  var: ec2.instances[0].public_dns_name
