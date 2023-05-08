@@ -23,7 +23,7 @@
       # Save instance details
       - name: Save instance details
         set_fact:
-            instance_id: "{{ ec2.instance_id }}"
+            instance_id: "{{ ec2.instances[0].id }}"
             region: "{{ ec2.region }}"
 
       # Wait for instance to boot up
