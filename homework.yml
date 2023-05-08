@@ -19,13 +19,6 @@
             instance_tags:
                 Name: webserver1
         register: ec2
-      # Print instance Details
-      - name: Print Instance Details
-        debug:
-            var: ec2.instances[0].id
-
-      - debug:
-            var: ec2.region
 
       # Save instance details
       - name: Save instance details
