@@ -26,8 +26,6 @@
             instance_id: "{{ ec2.instances[0].id }}"
             region: "{{ ec2.region }}"
 
-
-
       # Wait for instance to boot up
       - name: Wait for Instance to boot
         wait_for:
