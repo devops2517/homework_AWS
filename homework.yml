@@ -19,13 +19,6 @@
             instance_tags:
                 Name: webserver1
         register: ec2
-
-      # Save instance details
-      - name: Save instance details
-        set_fact:
-            instance_id: "{{ ec2.instances[0].id }}"
-            region: "{{ ec2.region }}"
-
       # Print instance Details
       - name: Print Instance Details
         debug:
@@ -33,6 +26,14 @@
 
       - debug:
             var: ec2.instances[0].public_dns_name
+
+      # Save instance details
+      - name: Save instance details
+        set_fact:
+            instance_id: "{{ ec2.instances[0].id }}"
+            region: "{{ ec2.region }}"
+
+
 
       # Wait for instance to boot up
       - name: Wait for Instance to boot
