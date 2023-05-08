@@ -26,6 +26,14 @@
             instance_id: "{{ ec2.instances[0].id }}"
             region: "{{ ec2.region }}"
 
+      # Print instance Details
+      - name: Print Instance Details
+        debug:
+            var: instance_id
+
+      - debug:
+            var: ec2.instances[0].public_dns_name
+
       # Wait for instance to boot up
       - name: Wait for Instance to boot
         wait_for:
@@ -68,11 +76,3 @@
         service:
             name: nginx
             state: restarted
-
-      # Print instance Details
-      - name: Print Instance Details
-        debug:
-            var: instance_id
-
-      - debug:
-            var: ec2.instances[0].public_dns_name
